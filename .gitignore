@@ -69,3 +69,6 @@ wheels/
 # Claude specific (allow agents directory)
 .claude/settings.local.json
 .claude/settings.json
+
+# Brand project outputs (ignore all generated brand projects)
+projects/

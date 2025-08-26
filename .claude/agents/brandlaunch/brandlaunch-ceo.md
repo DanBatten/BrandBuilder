@@ -98,6 +98,8 @@
 IMPORTANT: When user requests brand launch automation:
 
 1. **Project Setup** - Always start with project-manager to create Notion structure
+   - **Local File Structure**: All brand projects must be created in the `projects/` folder to keep them organized and gitignored
+   - **Example**: `projects/[Brand Name]/01_Market_Research/`, `projects/[Brand Name]/02_Brand_Strategy/`, etc.
 2. **Context Collection** - CRITICAL: Always collect contextual inputs before research:
    - Ask for existing documents, research files, or context materials
    - Request URLs of existing sites, competitor sites, or reference sites to analyze

@@ -76,14 +76,16 @@ brandlaunch-ceo/
 │   ├── mcp-notion.sh                    # Notion API bridge
 │   └── mcp-firecrawl.sh                 # Firecrawl API bridge
 ├── .mcp.json                            # MCP server configuration
-├── Apertur Brand Launch/                # Example project output
-│   ├── 01_Market_Research/             
-│   ├── 02_Brand_Strategy/              
-│   ├── 03_Visual_Identity/             
-│   ├── 04_Content_Production/          
-│   ├── 05_Marketing_Copy/              
-│   ├── 06_Web_Assets/                  
-│   └── 07_Project_Management/          
+├── projects/                            # Brand project outputs (gitignored)
+│   ├── Apertur Brand Launch/            # Example project output
+│   │   ├── 01_Market_Research/             
+│   │   ├── 02_Brand_Strategy/              
+│   │   ├── 03_Visual_Identity/             
+│   │   ├── 04_Content_Production/          
+│   │   ├── 05_Marketing_Copy/              
+│   │   ├── 06_Web_Assets/                  
+│   │   └── 07_Project_Management/          
+│   └── [Future brand projects...]
 └── README.md                           # This file
 ```
 
@@ -135,6 +137,8 @@ Company Description: [Brief description]
 Industry: [Industry type]
 Target Market: [Primary audience]"
 ```
+
+**Project Organization**: All brand projects are automatically created in the `projects/` folder and gitignored to keep your repository clean. Each project follows the 7-phase structure for comprehensive brand development.
 
 ### Example Workflow
 1. **Project Setup**: CEO creates Notion workspace with 7-folder structure
