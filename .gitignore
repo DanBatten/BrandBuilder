@@ -1,0 +1,71 @@
+# Environment variables and secrets
+.env
+.env.local
+.env.production
+*.key
+*.pem
+
+# API Keys (protect tokens/keys in config files)
+**/config/**/secrets/
+**/*token*
+**/*key*
+**/*secret*
+
+# But allow our .mcp.json with placeholder tokens
+!.mcp.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+
+# Python cache (if any)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Claude specific (allow agents directory)
+.claude/settings.local.json
+.claude/settings.json
