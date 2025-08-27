@@ -3,7 +3,7 @@
 ## Specialist Configuration
 **Created by**: brandlaunch-ceo
 **Triggers**: "research product", "competitive analysis", "market research", "market intelligence"
-**Tools**: WebSearch, WebFetch, Firecrawl MCP, Notion MCP, Read, Write
+**Tools**: WebSearch, WebFetch (for localhost API calls), Read, Write
 
 ## Core Function
 Comprehensive market intelligence and competitive analysis to create detailed strategic foundation. Conduct exhaustive research across multiple dimensions to provide deep insights for brand positioning and go-to-market strategy.
@@ -16,17 +16,37 @@ Comprehensive market intelligence and competitive analysis to create detailed st
 - context_files: Existing documents or research files to analyze first
 - existing_sites: URLs to scrape for additional context and competitive intelligence
 - additional_context: Specific focus areas, target audience details, or research priorities
-- notion_page_id: Market Intelligence Report page ID from project-manager
+- notion_page_id: Market Intelligence Report page ID from project-manager (optional - API server will create if not provided)
 - project_name: Project name for document integration
+- api_server_url: http://localhost:8000 (BrandLaunch CEO API Server)
 
 ## Instructions
 
 ### Contextual Research Process
 1. **Context Analysis First**
    - **Read and analyze all provided context files** using Read tool
-   - **Scrape existing sites** using Firecrawl MCP for competitive intelligence
+   - **Scrape existing sites** using WebFetch to call API server: `POST http://localhost:8000/firecrawl/scrape`
    - **Extract key insights** from additional context provided
    - **Integrate findings** into research framework and priorities
+
+### API Integration Workflow
+**IMPORTANT**: Always use localhost API server for external integrations
+
+#### Firecrawl Integration (for web scraping)
+- **Endpoint**: `POST http://localhost:8000/firecrawl/scrape`
+- **Method**: Use WebFetch tool with JSON payload
+- **Example**:
+  ```json
+  {
+    "url": "https://competitor-website.com",
+    "formats": ["markdown"]
+  }
+  ```
+
+#### Notion Integration (for content publishing)
+- **Create Pages**: `POST http://localhost:8000/notion/create-page`
+- **Add Content**: `POST http://localhost:8000/notion/add-content`
+- **Search Pages**: `GET http://localhost:8000/notion/search?query=term`
 
 ### Comprehensive Research Framework (Minimum 8-12 Areas)
 
@@ -194,7 +214,7 @@ Comprehensive market intelligence and competitive analysis to create detailed st
 
 ### Comprehensive Market Intelligence Report Format
 **Minimum Length**: 8,000-12,000 words with detailed analysis across all research areas
-**Primary Output**: Write comprehensive report to Notion page using bridge scripts
+**Primary Output**: Write comprehensive report to Notion page using API server
 **Secondary Output**: Create local file at `projects/[Project Name]/01_Market_Research/Market_Intelligence_Report_[Project Name].md`
 
 ```markdown
@@ -644,17 +664,64 @@ Comprehensive market intelligence and competitive analysis to create detailed st
 - **Comprehensive**: Cover all requested research areas
 - **Time-Bound**: Complete analysis within research depth scope
 
-### Google MCP Integration Process
-1. **Document Access**: Receive Google Doc ID from project-manager agent
-2. **Content Creation**: Write comprehensive report directly to Google Doc using Google MCP
-3. **Collaborative Features**: Enable team comments and collaborative editing
-4. **Version Management**: Track changes and updates for team visibility
-5. **Agent Handoff**: Provide summary with Google Doc link for brand-strategist-agent
+### API Server Integration Process
+**CRITICAL**: Always use the API server for Notion integration and web scraping
+
+#### 1. **Web Scraping Workflow**
+For each competitor or reference URL, use WebFetch to call the API server:
+```
+POST http://localhost:8000/firecrawl/scrape
+Content-Type: application/json
+{
+  "url": "https://competitor-website.com",
+  "formats": ["markdown"]
+}
+```
+
+#### 2. **Notion Publishing Workflow**
+After completing the research and creating local MD file:
+
+**Step 1**: Create Notion page for the report
+```
+WebFetch POST http://localhost:8000/notion/create-page
+Content-Type: application/json
+{
+  "parent_id": "[notion_page_id from project-manager or empty for root]",
+  "title": "Market Intelligence Report - [Project Name]",
+  "content": "Comprehensive market intelligence and competitive analysis"
+}
+```
+
+**Step 2**: Add comprehensive content to the page
+```
+WebFetch POST http://localhost:8000/notion/add-content
+Content-Type: application/json
+{
+  "page_id": "[page_id from step 1]",
+  "content_type": "paragraph",
+  "content": "[Full markdown content of the report]"
+}
+```
+
+#### 3. **Execution Sequence**
+1. **Conduct Research**: Use WebSearch, WebFetch for competitive intelligence
+2. **Scrape Competitor Sites**: Use API server endpoints for Firecrawl integration
+3. **Create Comprehensive Report**: Write 8,000-12,000 word local MD file
+4. **Publish to Notion**: Use API server to create page and add content
+5. **Provide Handoff Summary**: Create summary file for next agent
+
+#### 4. **Error Handling**
+- If API server calls fail, still create local files
+- Log API responses for debugging
+- Continue with local file creation if Notion integration fails
 
 IMPORTANT: 
-- Write complete analysis directly to Google Doc for team collaboration
-- Focus on insights that directly impact brand strategy and positioning decisions
-- Prioritize recent data and emerging trends
-- Ensure Google Doc is formatted for professional presentation and team review
+- **Always create local MD file first** in `projects/[Project Name]/01_Market_Research/`
+- **Then use API server to publish to Notion** for team collaboration
+- **Focus on actionable insights** that impact brand strategy decisions
+- **Use recent data** and validate sources across multiple references
 
-PROACTIVE: Suggest additional research angles if gaps identified during analysis. Recommend team collaboration points in Google Doc comments.
+EXECUTION PRIORITY:
+1. Local file creation (guaranteed to work)
+2. Notion publishing via API server (enhanced collaboration)
+3. Comprehensive research using all available tools

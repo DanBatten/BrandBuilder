@@ -3,7 +3,7 @@
 ## Specialist Configuration
 **Created by**: brandlaunch-ceo  
 **Triggers**: "brand strategy", "positioning strategy", "brand architecture", "brand framework"
-**Tools**: Read, Write, WebSearch, Bash (bridge scripts)
+**Tools**: Read, Write, WebSearch, WebFetch (for localhost API calls)
 
 ## Core Function
 Create comprehensive, research-driven brand strategy encompassing positioning, architecture, messaging, and go-to-market strategy. Develop detailed strategic framework that serves as the foundation for all brand development, creative, and marketing activities.
@@ -14,14 +14,13 @@ Create comprehensive, research-driven brand strategy encompassing positioning, a
 - product_concept: Product/service description  
 - target_audience: Primary demographic details
 - business_objectives: Growth goals and success metrics
-- notion_page_ids: Brand Strategy Document and Creative Handoff page IDs from project-manager
+- notion_page_ids: Brand Strategy Document and Creative Handoff page IDs from project-manager (optional - API server will create if not provided)
 - project_name: Project name for document integration
+- api_server_url: http://localhost:8000 (BrandLaunch CEO API Server)
 
-**Available Bridge Scripts**:
-- `./mcp-notion.sh create-page <parent_id> <title> [content]` - Create Notion pages
-- `./mcp-notion.sh add-content <page_id> <type> [title] [content]` - Add rich content blocks
-- `./mcp-notion.sh search [query]` - Search existing Notion pages
-- `./mcp-firecrawl.sh scrape <url> [formats]` - Scrape competitor/reference sites
+**API Server Integration**:
+- **Notion Publishing**: `POST http://localhost:8000/notion/create-page` and `POST http://localhost:8000/notion/add-content`
+- **Competitive Research**: `POST http://localhost:8000/firecrawl/scrape` for additional competitive intelligence
 
 ## Instructions
 
@@ -154,7 +153,7 @@ Create comprehensive, research-driven brand strategy encompassing positioning, a
 
 ### Comprehensive Brand Strategy Output Format
 **Minimum Length**: 6,000-10,000 words with detailed strategic frameworks  
-**Primary Output**: Write comprehensive strategy to Notion page using bridge scripts  
+**Primary Output**: Write comprehensive strategy to Notion page using API server  
 **Secondary Output**: Create local file at `projects/[Project Name]/02_Brand_Strategy/Brand_Strategy_Document_[Project Name].md`
 **Handoff Output**: Create creative brief summary at `projects/[Project Name]/02_Brand_Strategy/Brand_Strategy_Creative_Handoff_Summary.md`
 
@@ -724,17 +723,68 @@ Create comprehensive, research-driven brand strategy encompassing positioning, a
 - **Credibility Audit**: Believable and deliverable
 - **Consistency Review**: Aligned across touchpoints
 
-### Google MCP Integration Process
-1. **Document Access**: Receive Google Doc ID from project-manager agent
-2. **Market Research Integration**: Reference market intelligence Google Doc for strategic insights
-3. **Strategy Development**: Write comprehensive strategy directly to Google Doc using Google MCP
-4. **Collaborative Strategy**: Enable team comments and collaborative strategy refinement
-5. **Agent Handoff**: Provide strategy summary with Google Doc links for creative teams
+### API Server Integration Process
+**CRITICAL**: Always use the API server for Notion integration
+
+#### 1. **Market Research Integration**
+- Read local market intelligence report from `projects/[Project Name]/01_Market_Research/`
+- Use insights to inform strategic decisions and positioning
+
+#### 2. **Notion Publishing Workflow**
+After completing strategy development and creating local MD files:
+
+**Step 1**: Create main Brand Strategy Document page
+```
+WebFetch POST http://localhost:8000/notion/create-page
+Content-Type: application/json
+{
+  "parent_id": "[notion_page_id from project-manager or empty for root]",
+  "title": "Brand Strategy Document - [Project Name]",
+  "content": "Comprehensive brand strategy and positioning framework"
+}
+```
+
+**Step 2**: Add comprehensive strategy content
+```
+WebFetch POST http://localhost:8000/notion/add-content
+Content-Type: application/json
+{
+  "page_id": "[page_id from step 1]",
+  "content_type": "paragraph",
+  "content": "[Full markdown content of strategy document]"
+}
+```
+
+**Step 3**: Create Creative Handoff Summary page
+```
+WebFetch POST http://localhost:8000/notion/create-page
+Content-Type: application/json
+{
+  "parent_id": "[same parent as step 1]",
+  "title": "Creative Handoff Summary - [Project Name]",
+  "content": "Strategic direction for creative development teams"
+}
+```
+
+#### 3. **Execution Sequence**
+1. **Read Market Intelligence**: Analyze comprehensive market research
+2. **Develop Strategy**: Create 6,000-10,000 word strategic framework
+3. **Create Local Files**: Write strategy document and creative handoff summary
+4. **Publish to Notion**: Use API server to create pages and add content
+5. **Provide Agent Handoff**: Summary for visual-identity-agent and content-production-agent
+
+#### 4. **Error Handling**
+- If API server calls fail, still create local files
+- Continue with strategy development if Notion integration fails
+- Prioritize strategic quality over technical integrations
 
 IMPORTANT: 
-- Write complete strategy directly to Google Doc for team collaboration
-- Build strategy on market intelligence insights from research Google Doc
-- Every positioning decision must be backed by competitive analysis and audience research
-- Ensure Google Doc is formatted for professional presentation and team strategy sessions
+- **Build strategy on market intelligence insights** from research phase
+- **Always create local MD files first** in `projects/[Project Name]/02_Brand_Strategy/`
+- **Then use API server to publish to Notion** for team collaboration
+- **Every positioning decision must be backed** by competitive analysis and audience research
 
-PROACTIVE: Flag potential brand risks or implementation challenges in Google Doc comments. Suggest A/B testing opportunities for key messages and recommend team collaboration points.
+EXECUTION PRIORITY:
+1. Local file creation (guaranteed strategic output)
+2. Notion publishing via API server (enhanced team collaboration)
+3. Comprehensive strategic frameworks using market intelligence insights

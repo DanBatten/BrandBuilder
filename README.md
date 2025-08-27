@@ -11,8 +11,8 @@ The BrandLaunch CEO system is a complete AI-powered brand development pipeline t
 ### Core Components
 - **CEO Orchestrator**: Meta-agent that routes complex brand requests to specialized agents
 - **11 Specialized Agents**: Market research, brand strategy, visual identity, content production, etc.
-- **MCP Integration**: Notion and Firecrawl APIs for documentation and competitive intelligence
-- **Claude Code Integration**: Terminal-based development with local file access
+- **API Server Integration**: FastAPI localhost server for Notion and Firecrawl automation
+- **Claude Code Integration**: Terminal-based development with full local file access and external API integration
 
 ### Agent Ecosystem
 ```
@@ -75,7 +75,12 @@ brandlaunch-ceo/
 │   ├── feedback-integration-agent.md    # Feedback loops
 │   ├── mcp-notion.sh                    # Notion API bridge
 │   └── mcp-firecrawl.sh                 # Firecrawl API bridge
-├── .mcp.json                            # MCP server configuration
+├── .mcp.json                            # MCP server configuration (legacy)
+├── api-server/                          # FastAPI localhost server
+│   ├── main.py                          # API server implementation
+│   ├── requirements.txt                 # Python dependencies
+│   ├── start-server.sh                  # Server startup script
+│   └── .env.example                     # Environment variables template
 ├── projects/                            # Brand project outputs (gitignored)
 │   ├── Apertur Brand Launch/            # Example project output
 │   │   ├── 01_Market_Research/             
@@ -93,60 +98,73 @@ brandlaunch-ceo/
 
 ### Prerequisites
 - Claude Code CLI installed and configured
-- Node.js (for MCP servers)
+- Python 3.8+ (for API server)
 - API Keys for Notion and Firecrawl
 
 ### 1. Clone Repository
 ```bash
-git clone <repository-url>
-cd brandlaunch-ceo
+git clone https://github.com/DanBatten/BrandBuilder.git
+cd BrandBuilder
 ```
 
-### 2. Configure Environment Variables
-Create a `.env` file with your API keys:
+### 2. Set Up API Server
 ```bash
-NOTION_TOKEN=your_notion_token_here
-FIRECRAWL_API_KEY=your_firecrawl_api_key_here
+cd api-server
+cp .env.example .env
+# Edit .env with your API keys:
+# NOTION_TOKEN=your_notion_token_here
+# FIRECRAWL_API_KEY=your_firecrawl_api_key_here
 ```
 
-### 3. Set Up MCP Servers
-The system uses bridge scripts for MCP integration. Make sure the scripts are executable:
+### 3. Start API Server
 ```bash
-chmod +x .claude/agents/brandlaunch/mcp-*.sh
+./start-server.sh
 ```
+This creates a Python virtual environment, installs dependencies, and starts the server on http://localhost:8000
 
-### 4. Test Configuration
+### 4. Verify Setup
 ```bash
-# Test Notion integration
-./.claude/agents/brandlaunch/mcp-notion.sh search "test"
+# Check server health
+curl http://localhost:8000/
 
-# Test Firecrawl integration  
-./.claude/agents/brandlaunch/mcp-firecrawl.sh scrape "https://example.com" "markdown"
+# View interactive API docs
+open http://localhost:8000/docs
 ```
+
+### 5. Get API Keys
+- **Notion**: Go to https://www.notion.so/my-integrations to create an integration
+- **Firecrawl**: Sign up at https://www.firecrawl.dev/ for API access
+
+📖 **Detailed Setup Guide**: See [API_SERVER_SETUP.md](./API_SERVER_SETUP.md) for comprehensive setup instructions.
 
 ## 🎯 Usage
 
 ### Quick Start - New Brand Project
 ```bash
-# Launch Claude Code in project directory
+# 1. Start API server (in one terminal)
+cd api-server && ./start-server.sh
+
+# 2. Launch Claude Code (in another terminal)
 claude
 
-# Create new brand project
+# 3. Create new brand project
 @brandlaunch-ceo "Launch a new brand project for [Company Name]. 
 Company Description: [Brief description]
 Industry: [Industry type]
 Target Market: [Primary audience]"
 ```
 
-**Project Organization**: All brand projects are automatically created in the `projects/` folder and gitignored to keep your repository clean. Each project follows the 7-phase structure for comprehensive brand development.
+**Autonomous Integration**: Agents automatically use the API server to publish to Notion while creating local files. The system provides both immediate local output and collaborative cloud documentation.
 
-### Example Workflow
-1. **Project Setup**: CEO creates Notion workspace with 7-folder structure
-2. **Market Research**: Scrapes competitors, analyzes market size, identifies opportunities  
-3. **Brand Strategy**: Develops positioning, messaging, and go-to-market strategy
-4. **Creative Development**: Visual identity, content assets, marketing copy
-5. **Web Presence**: Landing pages, website designs, technical assets
-6. **Launch Coordination**: Project management and quality assurance
+**Project Organization**: All brand projects are created in the `projects/` folder and gitignored to keep your repository clean. Each project follows the 7-phase structure for comprehensive brand development.
+
+### Automated Workflow
+1. **Project Setup**: API server creates Notion workspace with organized structure
+2. **Market Research**: Agents scrape competitors via API, create 8,000+ word intelligence reports
+3. **Brand Strategy**: Develops 6,000+ word strategic framework with positioning and messaging  
+4. **Creative Development**: Visual identity guidelines and brand asset production
+5. **Web Presence**: Landing pages, website designs, and technical specifications
+6. **Documentation**: All outputs published to both local files and Notion for collaboration
 
 ## 🧪 Proven Success Cases
 
@@ -164,23 +182,36 @@ Target Market: [Primary audience]"
 
 ## 🔧 Technical Architecture
 
-### API Integration Approach
-- **Bridge Scripts**: Direct API calls wrapped in bash scripts for reliability
-- **Conversational Flexibility**: Agents make dynamic decisions based on brand context
-- **Error Handling**: Robust error management and retry logic
-- **Scalability**: Handles different industries and brand types
+### API Server Integration
+- **FastAPI Server**: Localhost REST API for external service integration
+- **Autonomous Agents**: Use WebFetch to call API endpoints
+- **Dual Output**: Local files (guaranteed) + Notion publishing (collaborative)
+- **Error Resilience**: Graceful degradation if API server is unavailable
 
-### MCP Bridge Scripts
+### API Endpoints
 ```bash
-# Notion Operations
-./mcp-notion.sh create-page <parent_id> <title> [content]
-./mcp-notion.sh add-content <page_id> <type> [title] [content]  
-./mcp-notion.sh search [query]
+# Notion Integration
+POST http://localhost:8000/notion/create-page
+POST http://localhost:8000/notion/add-content
+GET  http://localhost:8000/notion/search
 
-# Firecrawl Operations
-./mcp-firecrawl.sh scrape <url> [formats]
-./mcp-firecrawl.sh crawl <url> [depth] [limit]
-./mcp-firecrawl.sh map <url> [limit]
+# Firecrawl Integration  
+POST http://localhost:8000/firecrawl/scrape
+POST http://localhost:8000/firecrawl/crawl
+
+# Health Check
+GET  http://localhost:8000/
+```
+
+### Agent Integration Pattern
+```python
+# Agents use WebFetch to call localhost API
+WebFetch POST http://localhost:8000/notion/create-page
+Content-Type: application/json
+{
+  "title": "Market Intelligence Report",
+  "content": "Comprehensive analysis..."
+}
 ```
 
 ## 🎨 Brand Project Template
