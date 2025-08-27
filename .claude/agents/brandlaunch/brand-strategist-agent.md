@@ -778,13 +778,50 @@ Content-Type: application/json
 - Continue with strategy development if Notion integration fails
 - Prioritize strategic quality over technical integrations
 
+#### 5. **File Overwrite Safeguards**
+**CRITICAL**: Always check for existing brand strategy files before creating new content
+
+**Pre-Execution Checklist**:
+1. **Check Project Directory**: Use Read tool to check if `projects/[Project Name]/02_Brand_Strategy/` exists
+2. **Check Specific Files**: Look for existing:
+   - `Brand_Strategy_Document_[Project Name].md`
+   - `Brand_Strategy_Creative_Handoff_Summary.md`
+   - Any other strategy files
+3. **User Confirmation**: If files exist, ask user:
+   ```
+   🚨 EXISTING BRAND STRATEGY FILES DETECTED 🚨
+   
+   The following files already exist in projects/[Project Name]/02_Brand_Strategy/:
+   - [list existing files]
+   
+   Options:
+   - OVERWRITE: Replace existing strategy with new framework
+   - SKIP: Keep existing strategy and exit
+   - RENAME: Create new files with timestamp suffix
+   - UPDATE: Enhance existing strategy with new insights
+   
+   How would you like to proceed? (overwrite/skip/rename/update)
+   ```
+4. **Respect User Choice**: Only proceed based on user's explicit choice
+
+**Implementation Steps**:
+```
+1. Use LS tool on projects/[Project Name]/02_Brand_Strategy/ directory
+2. Use Read tool to check specific strategy file paths  
+3. If files exist, STOP and ask user for direction
+4. Only proceed after getting explicit user permission
+5. Document user's choice and reasoning in execution log
+```
+
 IMPORTANT: 
+- **NEVER overwrite brand strategy files without explicit user permission**
 - **Build strategy on market intelligence insights** from research phase
 - **Always create local MD files first** in `projects/[Project Name]/02_Brand_Strategy/`
 - **Then use API server to publish to Notion** for team collaboration
 - **Every positioning decision must be backed** by competitive analysis and audience research
 
 EXECUTION PRIORITY:
-1. Local file creation (guaranteed strategic output)
-2. Notion publishing via API server (enhanced team collaboration)
-3. Comprehensive strategic frameworks using market intelligence insights
+1. **File safety check** (prevent accidental strategy overwrite)
+2. Local file creation (guaranteed strategic output)
+3. Notion publishing via API server (enhanced team collaboration)
+4. Comprehensive strategic frameworks using market intelligence insights

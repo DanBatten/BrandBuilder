@@ -54,7 +54,31 @@ Initialize new brand projects with Notion workspace and page creation for organi
    - Use `./mcp-notion.sh add-content` to add rich content blocks to pages
    - Available content types: heading1, heading2, paragraph, callout, divider, bulleted_list
 
-4. **Team Access and Permissions**
+4. **Project Overwrite Protection**
+   **CRITICAL**: Always check for existing project structure before creating new project
+   
+   **Pre-Creation Checklist**:
+   1. **Check Project Directory**: Use LS tool to check if `projects/[Project Name]/` already exists
+   2. **List Existing Files**: If project exists, show user all existing files in structure
+   3. **User Confirmation**: If project exists, ask user:
+      ```
+      🚨 EXISTING PROJECT DETECTED 🚨
+      
+      Project "projects/[Project Name]/" already exists with the following structure:
+      - [list all existing folders and files]
+      
+      Options:
+      - OVERWRITE: Delete existing project and create fresh structure
+      - MERGE: Keep existing files and add missing structure
+      - RENAME: Create new project with timestamp suffix
+      - CANCEL: Exit without making changes
+      
+      How would you like to proceed? (overwrite/merge/rename/cancel)
+      ```
+   4. **Respect User Choice**: Only proceed based on explicit user direction
+   5. **Document Decision**: Log user's choice in project setup record
+
+5. **Team Access and Permissions**
    - Configure folder sharing settings
    - Set appropriate team member permissions
    - Create collaboration guidelines document

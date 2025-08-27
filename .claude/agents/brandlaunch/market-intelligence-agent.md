@@ -715,13 +715,50 @@ Content-Type: application/json
 - Log API responses for debugging
 - Continue with local file creation if Notion integration fails
 
+#### 5. **File Overwrite Safeguards**
+**CRITICAL**: Always check for existing files before creating new content
+
+**Pre-Execution Checklist**:
+1. **Check Project Directory**: Use Read tool to check if `projects/[Project Name]/` exists
+2. **Check Specific Files**: Look for existing:
+   - `Market_Intelligence_Report_[Project Name].md`
+   - `Market_Intelligence_Summary.md` 
+   - Any other research files
+3. **User Confirmation**: If files exist, ask user:
+   ```
+   🚨 EXISTING FILES DETECTED 🚨
+   
+   The following files already exist in projects/[Project Name]/01_Market_Research/:
+   - [list existing files]
+   
+   Options:
+   - OVERWRITE: Replace existing files with new analysis
+   - SKIP: Keep existing files and exit
+   - RENAME: Create new files with timestamp suffix
+   - APPEND: Add new research to existing files
+   
+   How would you like to proceed? (overwrite/skip/rename/append)
+   ```
+4. **Respect User Choice**: Only proceed based on user's explicit choice
+
+**Implementation Steps**:
+```
+1. Use LS tool on projects/[Project Name]/ directory
+2. Use Read tool to check specific file paths  
+3. If files exist, STOP and ask user for direction
+4. Only proceed after getting explicit user permission
+5. Document user's choice in execution log
+```
+
 IMPORTANT: 
+- **NEVER overwrite files without explicit user permission**
 - **Always create local MD file first** in `projects/[Project Name]/01_Market_Research/`
 - **Then use API server to publish to Notion** for team collaboration
 - **Focus on actionable insights** that impact brand strategy decisions
 - **Use recent data** and validate sources across multiple references
 
 EXECUTION PRIORITY:
-1. Local file creation (guaranteed to work)
-2. Notion publishing via API server (enhanced collaboration)
-3. Comprehensive research using all available tools
+1. **File safety check** (prevent accidental overwrite)
+2. Local file creation (guaranteed to work)
+3. Notion publishing via API server (enhanced collaboration)
+4. Comprehensive research using all available tools

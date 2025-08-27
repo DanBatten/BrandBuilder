@@ -85,12 +85,12 @@ async def create_notion_page(request: NotionCreatePageRequest):
         raise HTTPException(status_code=500, detail="Notion API not configured")
     
     try:
-        # Determine parent
+        # Determine parent - for now, create pages without parent (workspace will handle)
         if request.parent_id and request.parent_id.strip():
             parent = {"page_id": request.parent_id}
         else:
-            # Create as root page in workspace
-            parent = {"type": "page_id", "page_id": ""}  # This might need workspace adjustment
+            # Create as root page - let Notion handle workspace default
+            parent = {"type": "workspace", "workspace": True}
         
         # Create page properties
         properties = {
